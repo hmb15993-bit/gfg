@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#0b1f14;color:#e6f7ec}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>GasFireGames</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Kaushan+Script&display=swap">
 <style>
 /* Layout: sticky-less top bar, centered 960px page, game pages as 3 panels (info | table | log). */
 :root{
@@ -16,20 +16,42 @@ button,input{font:inherit}
 .hide{display:none!important}
 .mu{color:var(--mu)}.ok{color:var(--ok)}.bad{color:var(--bad)}.r{text-align:right}
 
-/* top bar */
-.bar{background:var(--bar);border-bottom:1px solid var(--line)}
-.bar-in{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.brand{font-size:19px;font-weight:700;letter-spacing:.3px;color:var(--pri2)}
-#nav{display:flex;gap:2px;overflow-x:auto;order:3;flex:1 1 100%}
-@media(min-width:720px){#nav{order:0;flex:1 1 auto}}
-#nav button{background:none;border:0;color:var(--mu);padding:6px 10px;border-radius:4px;cursor:pointer;white-space:nowrap}
-#nav button:hover{color:var(--tx)}
-#nav button.on{color:var(--tx);background:var(--panel)}
-.who{display:flex;align-items:center;gap:12px;margin-left:auto}
-.who .bal{color:var(--mu)}.who .bal b{color:var(--tx);font-weight:500}
+/* side bar: icon tabs down the left on wide screens, along the bottom on phones. The name shows in a tooltip. */
+.bar{background:var(--bar);position:fixed;z-index:40;display:flex}
+.brand{font-size:17px;font-weight:800;letter-spacing:.5px;color:var(--pri2);text-align:center;cursor:default}
+#nav{display:flex;scrollbar-width:none}
+#nav::-webkit-scrollbar{display:none}
+#nav .sp{flex:1 1 auto}
+#nav button{position:relative;display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;background:none;border:0;color:var(--mu);border-radius:10px;cursor:pointer}
+#nav button svg,.sout svg{width:22px;height:22px;display:block}
+#nav button:hover{color:var(--tx);background:rgba(255,255,255,.07)}
+#nav button:focus-visible,.sout:focus-visible{outline:2px solid var(--pri2);outline-offset:-2px}
+#nav button.on{color:var(--pri2);background:var(--panel)}
+#nav button.on::after{content:'';position:absolute;left:-12px;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--pri2)}
+@media(max-width:719.98px){#nav button.on::after{left:10px;right:10px;top:auto;bottom:-6px;width:auto;height:3px;border-radius:3px 3px 0 0}}
+.sbal{font-size:10px;line-height:1.1;color:var(--mu);text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default}
+.sbal b{display:block;color:var(--tx);font-weight:500;font-size:11px}
+.sout{display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;background:none;border:0;color:var(--mu);border-radius:10px;cursor:pointer}
+.sout:hover{color:var(--bad);background:rgba(255,255,255,.07)}
+#tip{position:fixed;z-index:70;background:var(--panel2);border:1px solid var(--line);color:var(--ptx);padding:5px 10px;border-radius:6px;font-size:13px;line-height:1.3;white-space:nowrap;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+@media(min-width:720px){
+ .bar{left:0;top:0;bottom:0;width:64px;flex-direction:column;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 0 calc(10px + env(safe-area-inset-bottom,0px));border-right:1px solid var(--line)}
+ #nav{flex:1 1 auto;min-height:0;width:100%;flex-direction:column;align-items:center;gap:2px;overflow-y:auto;overflow-x:hidden}
+ #nav .sp{min-height:12px}
+ body.side{padding-left:64px}
+}
+@media(max-width:719.98px){
+ .bar{left:0;right:0;bottom:0;align-items:center;gap:4px;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));border-top:1px solid var(--line)}
+ .brand{display:none}
+ #nav{flex:1 1 auto;min-width:0;flex-direction:row;align-items:center;gap:2px;overflow-x:auto;overflow-y:hidden}
+ #nav .sp{min-width:8px}
+ .sbal{flex:none;width:64px}.sbal b{font-size:10px}
+ body.side{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+ .toast{bottom:84px}
+}
 
 /* page */
-.page{max-width:960px;margin:0 auto;padding-block:26px 44px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{max-width:none;width:100%;margin:0;padding-block:26px 44px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .ph{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px}
 .ph h1{font-size:24px;font-weight:500}
 .ph p{color:var(--mu);font-size:13px;margin-top:2px}
@@ -83,7 +105,7 @@ input:focus{border-color:var(--pri2);outline:none}
 .auth .btn{width:100%}
 
 /* chat */
-.chat{display:grid;grid-template-columns:minmax(0,1fr) 230px;height:min(72vh,580px);min-height:380px;overflow:hidden}
+.chat{display:grid;grid-template-columns:minmax(0,1fr) 230px;height:calc(100vh - 150px);height:calc(100dvh - 150px);min-height:380px;overflow:hidden}
 .cmain{display:flex;flex-direction:column;min-width:0;min-height:0}
 #chatlog{flex:1;overflow-y:auto;padding:6px 18px 14px}
 .mg{display:flex;gap:12px;margin-top:14px}
@@ -167,7 +189,7 @@ canvas{display:block;margin:0 auto;max-width:100%;height:auto}
 .mp .mi{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer}.mp .mi.on,.mp .mi:hover{background:var(--panel)}
 .mp .av{flex:0 0 24px;height:24px;font-size:13px}
 .toast{position:fixed;right:16px;bottom:16px;max-width:320px;background:var(--panel2);border:1px solid var(--pri2);border-radius:8px;padding:10px 14px;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.5);cursor:pointer;word-break:break-word}
-#nav button[data-m]::after{content:' \25CF';color:#f472b6;font-size:10px}
+#nav button[data-m]::before{content:'';position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:#f472b6}
 #call{position:fixed;inset:0;z-index:50;background:rgba(3,12,7,.88);display:flex;align-items:center;justify-content:center;padding:16px}
 #call .cbox{width:min(560px,100%);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;text-align:center}
 #call .vids{position:relative;margin:12px 0;background:#000;border-radius:8px;overflow:hidden;aspect-ratio:16/9}
@@ -178,7 +200,7 @@ canvas{display:block;margin:0 auto;max-width:100%;height:auto}
 .btn.red{background:#b02a37;border-color:#b02a37;color:#fff}.btn.red:hover:not(:disabled){background:#c9303f}
 .btn.off{background:rgba(255,255,255,.12)}
 .av.sp{box-shadow:0 0 0 3px var(--pri2)}
-#nav button.live::after{content:' \25CF';color:var(--ok);font-size:10px}
+#nav button.live::before{content:'';position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--ok)}
 /* challenges: chess + blackjack duels */
 select{background:var(--inset);border:1px solid var(--line);color:var(--tx);padding:8px 10px;border-radius:4px;width:100%;font:inherit}
 select:focus{border-color:var(--pri2);outline:none}
@@ -212,19 +234,62 @@ select:focus{border-color:var(--pri2);outline:none}
 .mvl{max-height:230px;overflow-y:auto;font-size:13px;padding:10px 14px;line-height:1.8;border-top:1px solid var(--line)}
 .mvl b{color:var(--mu);font-weight:400;margin-right:4px}.mvl span{margin-right:12px;display:inline-block;min-width:44px}
 /* more games dropdown + arcade */
-#nav button.dd .car{font-size:10px;margin-left:3px}
 .ddm{position:fixed;z-index:45;min-width:230px;max-width:calc(100vw - 16px);overflow-y:auto;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:6px 0;box-shadow:0 10px 28px rgba(0,0,0,.55)}
 .ddm .ddi{display:block;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:8px 18px;cursor:pointer;font:inherit;white-space:nowrap}
 .ddm .ddi:hover,.ddm .ddi:focus{background:var(--panel);outline:none}.ddm .ddi.on{color:var(--pri2)}
 .ddm .ddh{padding:8px 18px 2px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu)}
 .ddm hr{border:0;border-top:1px solid var(--line);margin:6px 0}
-.gframe{width:100%;height:72vh;border:0;background:#000;display:block}
+.gframe{width:100%;height:calc(100vh - 250px);height:calc(100dvh - 250px);min-height:380px;border:0;background:#000;display:block}
+/* proxy tab */
+.px{position:relative;overflow:hidden;height:min(76vh,620px);min-height:440px;background:var(--bar)}
+.px canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.px-home{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:20px 16px 9%;overflow-y:auto}
+.px-logo{font:400 66px/1.1 'Kaushan Script','Brush Script MT',cursive;color:#fff;letter-spacing:1px;text-shadow:0 0 26px rgba(74,222,128,.38);user-select:none}
+.px-search{display:flex;align-items:center;gap:10px;width:min(576px,100%);height:52px;padding:0 9px 0 20px;border-radius:26px;background:var(--panel);border:1px solid var(--line);color:var(--mu)}
+.px-search:focus-within{border-color:var(--pri2)}
+.px-search input{flex:1;min-width:0;width:auto;background:transparent;border:0;padding:0;color:var(--tx);font-size:15px;outline:0}
+.px-search input:focus{border:0}
+.px-go{flex:0 0 34px;width:34px;height:34px;border-radius:50%;border:0;background:var(--pri);color:#fff;display:grid;place-items:center;cursor:pointer}
+.px-go:hover{background:#27c06b}
+.px-dock{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;max-width:100%;padding:8px;border-radius:32px;background:var(--panel);border:1px solid var(--line)}
+.px-ic{position:relative;width:44px;height:44px;border-radius:50%;border:0;background:var(--panel2);color:var(--tx);display:grid;place-items:center;cursor:pointer;padding:0}
+.px-ic:hover,.px-ic.on{background:var(--line)}
+.px-ic img{width:22px;height:22px;border-radius:5px}
+.px-ic b{font-weight:500;font-size:16px}
+.px-ic.rm::after{content:'\00d7';position:absolute;top:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:var(--bad);color:#fff;font-size:13px;line-height:18px;text-align:center}
+.px-sep{width:1px;height:28px;background:var(--line);margin:0 4px}
+.px-ef{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.px-ef input{width:150px}
+.px-msg{min-height:18px;font-size:13px;color:var(--bad);text-align:center}
+.px.br{display:flex;flex-direction:column;height:min(80vh,680px)}
+.px-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}
+.px-addr{flex:1 1 220px;min-width:0;display:flex}
+.px-fw{flex:1;min-height:0;background:#fff}
+.px-frame{width:100%;height:100%;border:0;display:block;background:#fff}
+@media(max-width:560px){.px-logo{font-size:52px}.px-ic{width:40px;height:40px}}
+
+.hypw{margin-top:14px;text-align:left}
+.hypt{background:none;border:0;padding:2px 0;font:inherit;font-size:11px;color:var(--mu);opacity:.22;cursor:pointer;letter-spacing:.03em}
+.hypt:hover,.hypt:focus,.hypt[aria-expanded=true]{opacity:.9;outline:none}
+#hyp{margin-top:10px}
+.hypb{background:#fff;padding:16px;display:grid;place-items:center}
+.hypb img{max-width:100%;height:auto;display:block}
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:14px}
 .lcard{background:var(--inset);border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;color:var(--tx);text-align:left;padding:0;font:inherit}
 .lcard:hover,.lcard:focus{border-color:var(--pri2);outline:none}
 .lcard .th{aspect-ratio:4/3;background:#0b3a20;display:grid;place-items:center;font-size:17px;font-weight:600;line-height:1.2;text-align:center;padding:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.55);overflow:hidden}
 .lcard .th img{width:100%;height:100%;object-fit:cover;display:block}
 .lcard .ti{padding:8px 10px;font-size:13px;line-height:1.25}
+
+/* movies */
+.mv .th{aspect-ratio:2/3;padding:0;background:#0b3a20}
+.mv .empty{grid-column:1/-1}
+.mv .mvs{color:var(--mu);font-size:12px;margin-top:2px}
+.mve{display:flex;flex-direction:column;max-height:340px;overflow:auto}
+.mvep{display:block;width:100%;text-align:left;background:transparent;border:0;border-top:1px solid var(--line);color:var(--tx);padding:9px 14px;cursor:pointer;font:inherit;font-size:13px}
+.mvep:first-child{border-top:0}
+.mvep:hover{background:rgba(255,255,255,.07)}
+.mvep.on{background:var(--pri);color:#fff}
 
 /* custom colors: surfaces use their own text colours so any background/area combination stays readable */
 :root{--ptx:#e6f7ec;--pmu:#8fbfa3}
@@ -281,11 +346,13 @@ input[type=range]{accent-color:var(--pri2);cursor:pointer}
 @media(prefers-reduced-motion:reduce){.cd.new,.cd.bust .in,.felt.win,.felt.bj,.felt.lose,.payup,.vpop,.lbr.in{animation:none}.cd .in{transition:none}}
 </style>
 
-<div class="bar hide" id="bar"><div class="bar-in">
- <div class="brand">GasFireGames</div>
+<div class="bar hide" id="bar">
+ <div class="brand" data-tip="GasFireGames">GFG</div>
  <nav id="nav"></nav>
- <div class="who"><span class="bal">credits <b class="balv">0</b></span><span class="mu" id="un"></span><button class="btn sm" id="out">Logout</button></div>
-</div></div>
+ <div class="sbal" data-tip="Credits"><b class="balv">0</b>credits</div>
+ <button class="sout" id="out" type="button" data-tip="Log out" aria-label="Log out"></button>
+ <span class="hide" id="un"></span>
+</div>
 
 <div class="page">
  <div id="auth" class="panel auth hide">
@@ -318,8 +385,39 @@ input[type=range]{accent-color:var(--pri2);cursor:pointer}
 const $=id=>document.getElementById(id);
 window.maeExportApis_=function(){};
 let db,user,uid,me,authed=false,tab='chat',busy=false;
-const TABS=[['chat','Chat'],['friends','Friends'],['dm','Messages'],['gcall','Global Call'],['play','Challenges'],['games','Games'],['lb','Leaderboard'],['me','Profile']];
-const TL={chat:'chatroom',friends:'friends',dm:'messages',gcall:'global call',play:'challenges',me:'profile',give:'giveaway',plinko:'plinko',slots:'slots',bj:'blackjack',games:'games',lb:'leaderboard'};
+const TABS=[['chat','Chat'],['friends','Friends'],['dm','Messages'],['gcall','Global Call'],['play','Challenges'],['games','Games'],['movies','Movies'],['proxy','Proxy'],['lb','Leaderboard'],['me','Profile']];
+const sbi=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const SBI={
+ chat:sbi('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
+ friends:sbi('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),
+ dm:sbi('<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>'),
+ gcall:sbi('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'),
+ play:sbi('<polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/>'),
+ games:sbi('<line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>'),
+ more:sbi('<rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/>'),
+ movies:sbi('<path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>'),
+ proxy:sbi('<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>'),
+ lb:sbi('<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>'),
+ admin:sbi('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>'),
+ me:sbi('<circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>'),
+ out:sbi('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>')};
+/* tooltip: shows the name of an icon on hover, keyboard focus, or a tap on touch screens */
+{const tip=document.createElement('div');tip.id='tip';tip.className='hide';let hideT=0;
+ const hideTip=()=>{clearTimeout(hideT);tip.classList.add('hide')};
+ const showTip=b=>{clearTimeout(hideT);tip.textContent=b.dataset.tip;tip.classList.remove('hide');
+  const r=b.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
+  if(matchMedia('(min-width:720px)').matches){tip.style.left=(r.right+10)+'px';tip.style.top=Math.max(6,r.top+r.height/2-h/2)+'px'}
+  else{tip.style.left=Math.max(6,Math.min(r.left+r.width/2-w/2,innerWidth-w-6))+'px';tip.style.top=Math.max(6,r.top-h-8)+'px'}};
+ document.addEventListener('DOMContentLoaded',()=>{document.body.append(tip);const bar=document.getElementById('bar');
+  const at=e=>e.target.closest&&e.target.closest('#bar [data-tip]');
+  bar.addEventListener('mouseover',e=>{const b=at(e);if(b)showTip(b)});
+  bar.addEventListener('mouseout',e=>{if(at(e))hideTip()});
+  bar.addEventListener('focusin',e=>{const b=at(e);if(b&&b.matches(':focus-visible'))showTip(b)});
+  bar.addEventListener('focusout',hideTip);
+  bar.addEventListener('touchstart',e=>{const b=at(e);if(b){showTip(b);hideT=setTimeout(hideTip,1400)}},{passive:true});
+  bar.addEventListener('click',hideTip);document.addEventListener('keydown',e=>{if(e.key==='Escape')hideTip()});
+  addEventListener('resize',hideTip)})}
+const TL={chat:'chatroom',friends:'friends',dm:'messages',gcall:'global call',play:'challenges',me:'profile',give:'giveaway',plinko:'plinko',slots:'slots',bj:'blackjack',games:'games',movies:'movies',proxy:'proxy',lb:'leaderboard'};
 const fmt=n=>Math.floor(n).toLocaleString();
 let tok=localStorage.getItem('cmb_tok')||'',pend=0;
 async function api(body){
@@ -357,10 +455,13 @@ $('logb').onclick=async()=>{$('amsg').textContent='Logging in...';try{signedIn(a
 $('out').onclick=async()=>{try{await db.doc('presence/'+uid).delete()}catch(e){}localStorage.removeItem('cmb_tok');location.reload()};
 async function beat(){try{await db.doc('presence/'+uid).set({uid,name:me.name,e:me.emoji,c:me.color,i:me.img||'',at:TL[tab],t:Date.now()})}catch(e){}}
 function enter(){me.emoji=me.emoji||'🐸';me.color=me.color||'#1fa65a';me.bio=me.bio||'';me.status=me.status||'';
- authed=true;applyTheme(me.bg,me.pn);if(me.admin&&!TABS.some(t=>t[0]==='admin')){TABS.push(['admin','Admin']);TL.admin='admin'}$('auth').classList.add('hide');$('bar').classList.remove('hide');
+ authed=true;applyTheme(me.bg,me.pn);if(me.admin&&!TABS.some(t=>t[0]==='admin')){TABS.push(['admin','Admin']);TL.admin='admin'}$('auth').classList.add('hide');$('bar').classList.remove('hide');document.body.classList.add('side');
  $('un').textContent=me.name;
- const tb=t=>`<button data-t="${t[0]}">${t[1]}</button>`;
- $('nav').innerHTML=TABS.filter(t=>t[0]!=='admin').map(tb).join('')+'<button id="mg" class="dd" type="button" aria-haspopup="true" aria-expanded="false">More games <span class="car">\u25BE</span></button>'+TABS.filter(t=>t[0]==='admin').map(tb).join('');
+ const nm=t=>(TABS.find(x=>x[0]===t)||[0,t])[1],isAdm=TABS.some(x=>x[0]==='admin');
+ const tb=t=>`<button data-t="${t}" data-tip="${nm(t)}" aria-label="${nm(t)}" type="button">${SBI[t]}</button>`;
+ const more=`<button id="mg" class="dd" type="button" aria-haspopup="true" aria-expanded="false" data-tip="More games" aria-label="More games">${SBI.more}</button>`;
+ $('nav').innerHTML=['chat','games','more','movies','proxy','play','gcall'].map(t=>t==='more'?more:tb(t)).join('')+'<i class="sp"></i>'+['dm','friends','lb','admin','me'].filter(t=>t!=='admin'||isAdm).map(tb).join('');
+ $('out').innerHTML=SBI.out;
  buildMore();
  $('nav').onclick=e=>{const b=e.target.closest('button');if(!b||busy)return;if(b.id==='mg'){toggleMore();return}if(b.dataset.t)show(b.dataset.t)};
  seenT=+localStorage.getItem('cmb_seen')||Date.now();setBal();show('chat');setInterval(pollRing,2500);setInterval(pollMentions,4000);setInterval(pollGames,4000);setInterval(syncBal,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){pollMentions();pollGames()}});window.addEventListener('beforeunload',()=>{if(CALL)endCall(true);if(GC)gcLeave()});tick();setInterval(tick,1000);setInterval(beat,20000);setInterval(async()=>{if(pend||busy)return;try{const p=await db.doc('profiles/'+uid).get();if(p.exists&&!pend){me.balance=p.data().balance;setBal()}}catch(e){}},5000)}
@@ -368,7 +469,7 @@ function setBal(){document.querySelectorAll('.balv').forEach(e=>e.textContent=fm
 async function pay(d){me.balance=Math.max(0,me.balance+d);setBal();pend++;try{const j=await api({op:'pay',amount:d});if(pend===1&&j&&typeof j.balance==='number'){me.balance=j.balance;setBal()}}catch(e){}pend--}
 async function syncBal(){if(pend)return;try{const j=await api({op:'pay',amount:0});if(!pend&&typeof j.balance==='number'){me.balance=j.balance;setBal()}}catch(e){}}
 function show(t){tab=t;[...$('nav').children].forEach(b=>{b.classList.toggle('on',b.dataset.t===t);if(b.dataset.t===t)delete b.dataset.m});
- const f={chat:vChat,admin:vAdmin,friends:vFriends,dm:vDM,gcall:vGCall,play:vPlay,me:vProfile,give:vGive,plinko:vPlinko,slots:vSlots,bj:vBJ,games:vGames,lb:vLB}[t]||vChat;markMore(t);$('tabs').innerHTML='<div id="pane"></div>';unsub();f();beat()}
+ const f={chat:vChat,admin:vAdmin,friends:vFriends,dm:vDM,gcall:vGCall,play:vPlay,me:vProfile,give:vGive,plinko:vPlinko,slots:vSlots,bj:vBJ,games:vGames,movies:vMovies,proxy:vProxy,lb:vLB}[t]||vChat;markMore(t);$('tabs').innerHTML='<div id="pane"></div>';unsub();f();beat()}
 let subs=[];function unsub(){subs.forEach(s=>s());subs=[]}
 const ph=(t,s)=>`<div class="ph"><div><h1>${t}</h1>${s?`<p>${s}</p>`:''}</div><div class="cash">credits <b class="balv">${fmt(me.balance)}</b></div></div>`;
 function adj(k){const e=$('bet');let v=Math.floor(+e.value)||1;const bal=Math.max(1,Math.floor(me.balance));
@@ -459,7 +560,10 @@ const freshOdds=()=>Date.now()-oddsT>10000?loadOdds():0;
 /* LEADERBOARD */
 function vLB(){
  $('pane').innerHTML=`${ph('leaderboard','The richest players on the site. Updates every few seconds.')}
- <div class="panel"><div class="hd">Top players by credits <span class="mu" id="lbn"></span></div><div id="lbl"><div class="empty">Loading…</div></div><div class="note" id="lbm"></div></div>`;
+ <div class="panel"><div class="hd">Top players by credits <span class="mu" id="lbn"></span></div><div id="lbl"><div class="empty">Loading…</div></div><div class="note" id="lbm"></div></div>
+ <div class="hypw"><button type="button" class="hypt" id="hypt" aria-expanded="false">hypergamy</button></div>
+ <div class="panel hide" id="hyp"><div class="hd">Hypergamy</div><div class="hypb"><img src="/img/hypergamy.png" alt="Diagram: two columns of figures with dashed arrows from the left column pointing mostly at the same few figures in the right column" width="250" height="470"></div></div>`;
+ $('hypt').onclick=()=>{const h=$('hyp'),open=h.classList.toggle('hide')===false;$('hypt').setAttribute('aria-expanded',open?'true':'false');if(open)h.scrollIntoView({behavior:'smooth',block:'nearest'})};
  let first=true;
  const row=(x,mineRow)=>{const r=el('div','lbr'+(first?' in':'')+(x.uid===uid?' me':'')+(x.rank<=3?' r'+x.rank:'')),rk=el('div','rk'+(x.rank<=3?' m':''),x.rank<=3?['\u{1F947}','\u{1F948}','\u{1F949}'][x.rank-1]:'#'+x.rank),av=el('div','av'),nm=el('div','nm',x.name+(x.uid===uid?' (you)':'')),b=el('div','bal',fmt(x.balance));
   if(first)r.style.animationDelay=Math.min(x.rank,12)*45+'ms';
@@ -1472,7 +1576,72 @@ const ARCADE=[
  ['flappy','Flappy Bird','/games/flappybird/index.html','Click or press space to flap. Fly through the pipes without touching them.',0,'',['#38bdf8','#0f766e'],['Skill','Arcade']],
  ['pvz','Plants vs Zombies','/games/pvz/index.html','A small demo: the plants shoot and the zombies march in. Nothing to control yet.',0,'',['#16a34a','#14532d'],['Strategy']],
  ['rof','Rise of Fire','/games/riseoffire.html','Strategy: pick a nation, declare wars, march armies and conquer 45% of the world. Play with bots, or online with up to 5 friends (create a game and share the code).',0,'',['#ea580c','#7f1d1d'],['Strategy']],
- ['oregon','Oregon Trail','/games/oregon/index.html','Press Enter or tap to move through the intro screens.',0,'',['#1d4ed8','#172554'],['Simulation']]];
+ ['oregon','Oregon Trail','/games/oregon/index.html','Press Enter or tap to move through the intro screens.',0,'',['#1d4ed8','#172554'],['Simulation']],
+ ['k3','Kindergarten 3','/games/kindergarten3/index.html','You are a 5 year old trying to survive kindergarten. Click inside the game to play. First load downloads about 80 MB, so give it a moment.',0,'',['#f59e0b','#be185d'],['Adventure','Puzzle']],
+ ['gtavc','GTA Vice City','https://joncodeofficial.github.io/gta-vice-city-wasm/','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['#ec4899','#7c3aed'],['Action','3D']],
+ ['1v1lol','1v1.LOL','/games/1v1lol/index.html','Online third-person shooter and building game. Click inside the game to play. First load downloads about 40 MB, so give it a moment.',0,'',['#ef4444','#7f1d1d'],['Shooter','3D']],
+ ['gasnite','GASNITE','/games/gasnite/index.html','Battle royale with building. Click inside the game to aim with the mouse: WASD to move, F to build, Tab for your inventory. It uses your GasFireGames account, so your progress is saved online, and friends you invite to your party join you as teammates.',0,'',['#fbbf24','#1e3a8a'],['Shooter','3D']],
+ ['2048','2048','/games/2048/index.html','Use the arrow keys (or swipe) to slide the tiles. Matching tiles merge: reach 2048.',0,'',['#f59e0b','#78350f'],['Puzzle']],
+ /* Alexx743's games: other sites shown in a sandboxed frame */
+ ['ax_among_us','Among Us','https://universal-games-unblocked.vercel.app/projects/among-us/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(205,62%,42%)','hsl(245,58%,18%)'],['Action','Multiplayer']],
+ ['ax_backrooms','Backrooms','https://universal-games-unblocked.vercel.app/projects/backrooms/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(302,62%,42%)','hsl(342,58%,18%)'],['Horror','3D']],
+ ['ax_basket_random','Basket Random','https://basket-random-omega.vercel.app','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(62,62%,42%)','hsl(102,58%,18%)'],['Sports','Multiplayer']],
+ ['ax_basketball_stars','Basketball Stars','https://universal-games-unblocked.vercel.app/projects/basketball-stars/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(227,62%,42%)','hsl(267,58%,18%)'],['Sports']],
+ ['ax_basketbros','Basket Bros','https://basketbros.io','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(205,62%,42%)','hsl(245,58%,18%)'],['Sports','Multiplayer']],
+ ['ax_bloomstd','Bloons TD','https://universal-games-unblocked.vercel.app/projects/bloonstd/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(5,62%,42%)','hsl(45,58%,18%)'],['Strategy']],
+ ['ax_boxing_random','Boxing Random','https://boxing-random-psi.vercel.app','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(173,62%,42%)','hsl(213,58%,18%)'],['Sports','Multiplayer']],
+ ['ax_chrome_dino','Chrome Dino','https://universal-games-unblocked.vercel.app/projects/chrome-dino/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(17,62%,42%)','hsl(57,58%,18%)'],['Arcade','Skill']],
+ ['ax_crossy_road','Crossy Road','https://crossy-road-delta.vercel.app','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(128,62%,42%)','hsl(168,58%,18%)'],['Arcade','Skill']],
+ ['ax_csgo_clicker','CS:GO Clicker','https://universal-games-unblocked.vercel.app/projects/csgo-clicker/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(46,62%,42%)','hsl(86,58%,18%)'],['Idle']],
+ ['ax_deadshot','Deadshot.io','https://deadshot.io','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(263,62%,42%)','hsl(303,58%,18%)'],['Shooter','3D']],
+ ['ax_death_run3d','Death Run 3D','https://universal-games-unblocked.vercel.app/projects/death-run-3d/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(143,62%,42%)','hsl(183,58%,18%)'],['Action','3D']],
+ ['ax_draw_the_hill','Draw the Hill','https://universal-games-unblocked.vercel.app/projects/draw-the-hill/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(27,62%,42%)','hsl(67,58%,18%)'],['Racing','Puzzle']],
+ ['ax_drift_io','Drift.io','https://drift.io/?room=use1jJiwV','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(160,62%,42%)','hsl(200,58%,18%)'],['Racing','Multiplayer']],
+ ['ax_drive_mad','Drive Mad','https://main.dd8vt524eqsk2.amplifyapp.com/projects/drive-mad/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(21,62%,42%)','hsl(61,58%,18%)'],['Racing','Skill']],
+ ['ax_eggy_car','Eggy Car','https://eggycar.vercel.app','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(263,62%,42%)','hsl(303,58%,18%)'],['Racing','Skill']],
+ ['ax_ev_io','Ev.io','https://ev.io','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(94,62%,42%)','hsl(134,58%,18%)'],['Shooter','3D']],
+ ['ax_fruit_ninja','Fruit Ninja','https://main.dd8vt524eqsk2.amplifyapp.com/projects/fruitninja/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(217,62%,42%)','hsl(257,58%,18%)'],['Arcade','Skill']],
+ ['ax_idle_breakout','Idle Breakout','https://purepro4561.github.io/Idle-Breakout/','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(136,62%,42%)','hsl(176,58%,18%)'],['Idle']],
+ ['ax_infinite_craft','Infinite Craft','https://infinitecraft.net/#','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(347,62%,42%)','hsl(27,58%,18%)'],['Puzzle','Sandbox']],
+ ['ax_jeff_bazos','You Are Jeff Bezos','https://philome.la/KrisLigman/you-are-jeff-bezos/play/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(307,62%,42%)','hsl(347,58%,18%)'],['Simulation','Idle']],
+ ['ax_krunker','Krunker.io','https://krunker.io','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(215,62%,42%)','hsl(255,58%,18%)'],['Shooter','3D']],
+ ['ax_loshot','Lolshot.io','https://lolshot.io','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(260,62%,42%)','hsl(300,58%,18%)'],['Shooter']],
+ ['ax_madilin_stuntcars','Madalin Stunt Cars 3','https://adfree3kh0.github.io/projects/madalin-stunt-cars-3/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(100,62%,42%)','hsl(140,58%,18%)'],['Racing','3D']],
+ ['ax_mario','Mario','https://universal-games-unblocked.vercel.app/projects/mario/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(131,62%,42%)','hsl(171,58%,18%)'],['Platformer']],
+ ['ax_minecraft_classic','Minecraft Classic','https://universal-games-unblocked.vercel.app/projects/minecraft-classic/index.html?join=xnkw0vKx82V-6m9p','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(256,62%,42%)','hsl(296,58%,18%)'],['Sandbox','3D']],
+ ['ax_monkey_mart','Monkey Mart','https://monkey-mart-five.vercel.app','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(220,62%,42%)','hsl(260,58%,18%)'],['Simulation']],
+ ['ax_paper_io','Paper.io','https://paper-io.com','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(235,62%,42%)','hsl(275,58%,18%)'],['Arcade','Multiplayer']],
+ ['ax_retro_bowl','Retro Bowl','https://retro-bowl-six.vercel.app','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(101,62%,42%)','hsl(141,58%,18%)'],['Sports']],
+ ['ax_run3','Run 3','https://lekug.github.io/tn6pS9dCf37xAhkJv/','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(203,62%,42%)','hsl(243,58%,18%)'],['Action','Endless runner']],
+ ['ax_santa_tracker','Santa Tracker','https://santatracker.google.com','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(98,62%,42%)','hsl(138,58%,18%)'],['Simulation']],
+ ['ax_scrap_metal3','Scrap Metal 3','https://main.dd8vt524eqsk2.amplifyapp.com/projects/scrapmetal/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(154,62%,42%)','hsl(194,58%,18%)'],['Racing','3D']],
+ ['ax_shellshockers','Shell Shockers','https://shellshock.io','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(335,62%,42%)','hsl(15,58%,18%)'],['Shooter','Multiplayer']],
+ ['ax_short_life','Short Life','https://www.yurk.com/games/shortlife/play.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(53,62%,42%)','hsl(93,58%,18%)'],['Adventure','Skill']],
+ ['ax_slope2','Slope 2','https://main.dd8vt524eqsk2.amplifyapp.com/projects/slope-2/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(222,62%,42%)','hsl(262,58%,18%)'],['Action','3D']],
+ ['ax_slow_roads','Slow Roads','https://slowroads.io','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(71,62%,42%)','hsl(111,58%,18%)'],['Racing','3D']],
+ ['ax_smash_karts','Smash Karts','https://smashkarts.io','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(28,62%,42%)','hsl(68,58%,18%)'],['Racing','Multiplayer']],
+ ['ax_snake','Snake','https://adfree3kh0.github.io/projects/google-snake/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(347,62%,42%)','hsl(27,58%,18%)'],['Arcade']],
+ ['ax_snow_rider_3d','Snow Rider 3D','https://snow-rider-3d-pi.vercel.app','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(41,62%,42%)','hsl(81,58%,18%)'],['Action','3D']],
+ ['ax_soccer_random','Soccer Random','https://soccer-random-five.vercel.app','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(229,62%,42%)','hsl(269,58%,18%)'],['Sports','Multiplayer']],
+ ['ax_spidey_swing','Spidey Swing','https://html5.gamedistribution.com/2d529603443d463eaf36c061b71f84ff/','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(3,62%,42%)','hsl(43,58%,18%)'],['Action','Skill']],
+ ['ax_temple_run2','Temple Run 2','https://universal-games-unblocked.vercel.app/projects/temple-run-2/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(257,62%,42%)','hsl(297,58%,18%)'],['Action','Endless runner']],
+ ['ax_tube_jumpers','Tube Jumpers','https://adfree3kh0.github.io/projects/tube-jumpers/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(127,62%,42%)','hsl(167,58%,18%)'],['Arcade','Skill']],
+ ['ax_tunnel_rush','Tunnel Rush','https://universal-games-unblocked.vercel.app/projects/tunnel-rush/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(275,62%,42%)','hsl(315,58%,18%)'],['Action','Skill']],
+ ['ax_venge_io','Venge.io','https://venge.io/#','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(64,62%,42%)','hsl(104,58%,18%)'],['Shooter','3D']],
+ ['ax_volly_random','Volley Random','https://kdata1.com/2021/02/Volley_random/','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(284,62%,42%)','hsl(324,58%,18%)'],['Sports','Multiplayer']],
+ ['ax_wordle','Wordle','https://universal-games-unblocked.vercel.app/projects/wordle/index.html#daily','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(106,62%,42%)','hsl(146,58%,18%)'],['Puzzle']],
+ ['ax_worlds_hardest_game','World\'s Hardest Game','https://universal-games-unblocked.vercel.app/projects/worlds-hardest-game/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(167,62%,42%)','hsl(207,58%,18%)'],['Puzzle','Skill']],
+ ['ax_worlds_hardest_game2','World\'s Hardest Game 2','https://universal-games-unblocked.vercel.app/projects/worlds-hardest-game-2/index.html','Runs from another site. Click inside the game to play. If it does not load inside the page, use Open in new tab.',1,'',['hsl(223,62%,42%)','hsl(263,58%,18%)'],['Puzzle','Skill']],
+ ['ddlc','Doki Doki Literature Club','/games/ddlc/index.html','Fan web port of Doki Doki Literature Club (Ren\'Py). Click inside the game to play. It works best in Chrome, and the first load downloads a lot, so give it a moment. It contains disturbing themes.',0,'',['#f9a8d4','#701a75'],['Visual novel','Horror']]];
+/* Every other page in /games is listed automatically from games.json (built by scripts/gen-games.js on each deploy). */
+let AUTOLOADED=false;
+function loadAutoGames(){if(AUTOLOADED)return;AUTOLOADED=true;
+ const key=u=>{try{return decodeURIComponent(u).toLowerCase()}catch(e){return String(u).toLowerCase()}};
+ fetch('/games.json',{cache:'no-cache'}).then(r=>r.ok?r.json():[]).then(list=>{
+  const seen=new Set(ARCADE.map(g=>key(g[2]))),ids=new Set(ARCADE.map(g=>g[0]));let added=0;
+  for(const x of list){const k=key(x.url);if(seen.has(k)||ids.has(x.id))continue;seen.add(k);ids.add(x.id);
+   ARCADE.push([x.id,x.name,x.url,x.hint||'',0,'',x.colors||['#334155','#0f172a'],x.cats&&x.cats.length?x.cats:['Retro']]);added++}
+  if(added&&tab==='games'&&$('lg'))vGames()}).catch(()=>{AUTOLOADED=false})}
 const MORE=[['',[['give','Giveaway'],['plinko','Plinko'],['slots','Slots'],['bj','Blackjack']]]];
 const inMore=t=>MORE.some(m=>m[1].some(x=>x[0]===t));
 function markMore(t){const mg=$('mg');if(mg)mg.classList.toggle('on',inMore(t));
@@ -1488,8 +1657,9 @@ function closeMore(){const M=$('mgm'),b=$('mg');if(M)M.classList.add('hide');if(
 function toggleMore(){const M=$('mgm'),b=$('mg');if(!M||!b)return;
  if(!M.classList.contains('hide'))return closeMore();
  M.classList.remove('hide');b.setAttribute('aria-expanded','true');
- const r=b.getBoundingClientRect();M.style.top=(r.bottom+4)+'px';M.style.maxHeight='calc(100vh - '+(r.bottom+16)+'px)';
- M.style.left=Math.max(8,Math.min(r.left,innerWidth-M.offsetWidth-8))+'px';
+ const r=b.getBoundingClientRect();
+ if(matchMedia('(min-width:720px)').matches){M.style.maxHeight='calc(100vh - 16px)';M.style.left=(r.right+8)+'px';M.style.top=Math.max(8,Math.min(r.top,innerHeight-M.offsetHeight-8))+'px'}
+ else{M.style.maxHeight=Math.max(120,r.top-16)+'px';M.style.left=Math.max(8,Math.min(r.left,innerWidth-M.offsetWidth-8))+'px';M.style.top=Math.max(8,r.top-4-M.offsetHeight)+'px'}
  const f=M.querySelector('.ddi.on')||M.querySelector('.ddi');if(f)f.focus()}
 document.addEventListener('click',e=>{if(e.target.closest('#mg')||e.target.closest('#mgm'))return;closeMore()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMore()});
@@ -1511,9 +1681,9 @@ function gameShell(title,hint,url,ext,extra){
   btn('Fullscreen',()=>{if(fr.requestFullscreen)fr.requestFullscreen()}),btn('Reload',()=>swap(cur)),a)}
 
 let gQ='',gC='All';
-function vGames(){
+function vGames(){loadAutoGames();
  const games=ARCADE.slice().sort((a,b)=>a[1].localeCompare(b[1]));
- $('pane').innerHTML=ph('games','Pick a game and click it to play right here.')+`<div class="panel"><div class="bd"><input id="lq" placeholder="search games" autocomplete="off" aria-label="Search games"><div class="row" id="lc" style="margin-top:10px"></div></div><div class="lgrid" id="lg"></div></div>`;
+ $('pane').innerHTML=ph('games','Pick a game and click it to play right here. '+ARCADE.length+' games.')+`<div class="panel"><div class="bd"><input id="lq" placeholder="search games" autocomplete="off" aria-label="Search games"><div class="row" id="lc" style="margin-top:10px"></div></div><div class="lgrid" id="lg"></div></div>`;
  const cats=['All',...[...new Set(games.flatMap(g=>g[7]))].sort()];
  const open=g=>gameShell(g[1],g[3],g[2],!!g[4],[btn('\u2190 All games',()=>vGames())].concat(g[8]?[{alt:g[8]}]:[]));
  const draw=()=>{const L=$('lg');if(!L)return;L.textContent='';
@@ -1524,6 +1694,172 @@ function vGames(){
    c.append(th);c.onclick=()=>open(g);L.append(c)})};
  const chips=()=>{const C=$('lc');C.textContent='';cats.forEach(c=>{const b=btn(c,()=>{gC=c;chips();draw()});if(c===gC)b.classList.add('pri');C.append(b)})};
  $('lq').value=gQ;$('lq').oninput=()=>{gQ=$('lq').value;draw()};chips();draw()}
+/* ---------- Movies tab ----------
+   Browse and search movies and TV shows (titles and posters from TMDB), then watch in a frame from flixer.su.
+   Copied over from the Velara site's movie tab and restyled to match. MV_KEY is only used as a fallback if /api/movies is not deployed. */
+const MV_KEY='ce2f9e51a2ad61fa8d66b969a45727f9',MV_API='https://api.themoviedb.org/3',MV_IMG='https://image.tmdb.org/t/p/w500';
+const MV_LISTS=[['trend','Trending','/trending/all/week'],['movie','Movies','/trending/movie/day'],['tv','TV shows','/trending/tv/day'],
+ ['topm','Top movies','/discover/movie?include_adult=false&sort_by=vote_average.desc&without_genres=99,10755&vote_count.gte=200'],
+ ['topt','Top TV','/discover/tv?include_adult=false&sort_by=vote_average.desc&without_genres=99,10755&vote_count.gte=200']];
+let mvQ='',mvL='trend',mvTk=null,mvSrv=true;
+/* Asks /api/movies (the server talks to TMDB, so it works even where themoviedb.org is blocked). If that function is not deployed, it falls back to asking TMDB directly from the browser. */
+async function mvKey(){if(!mvTk||mvTk.exp-Date.now()<15*6e4)mvTk=await api({op:'pxtoken'});return mvTk.k}
+const mvImg=p=>mvSrv&&mvTk?'/api/movies?k='+encodeURIComponent(mvTk.k)+'&img='+encodeURIComponent(p):MV_IMG+p;
+async function mvGet(path){
+ if(mvSrv){let r=null;try{r=await fetch('/api/movies?k='+encodeURIComponent(await mvKey())+'&p='+encodeURIComponent(path))}catch(e){}
+  if(r&&r.ok)return r.json();
+  if(r&&r.status!==404){let m='';try{m=(await r.json()).error}catch(e){}throw new Error(m||'error '+r.status)}
+  mvSrv=false}
+ const r=await fetch(MV_API+path+(path.includes('?')?'&':'?')+'api_key='+MV_KEY+'&language=en-US');
+ if(!r.ok)throw new Error(r.status===401?'the movie database rejected the API key':'error '+r.status);return r.json()}
+function vMovies(){
+ $('pane').innerHTML=ph('movies','Search or browse movies and TV shows, then click one to watch.')+'<div class="panel"><div class="bd"><input id="mvq" placeholder="search movies and TV shows" autocomplete="off" aria-label="Search movies and TV shows"><div class="row" id="mvc" style="margin-top:10px"></div></div><div class="lgrid mv" id="mvg"></div><div class="bd" id="mvm" style="text-align:center"></div></div><p class="note" style="padding:10px 0 0">Titles and posters come from TMDB. Videos come from a third-party player, so they can be slow or go down.</p>';
+ let page=1,seq=0,t=null;
+ const card=m=>{const type=m.media_type||(m.first_air_date?'tv':'movie');
+  if(!m.poster_path||(type!=='movie'&&type!=='tv'))return null;
+  const title=m.title||m.name||'Untitled',yr=(m.release_date||m.first_air_date||'').slice(0,4)||'N/A',rt=Math.round((m.vote_average||0)*10)/10;
+  const c=el('button','lcard'),th=el('div','th'),im=el('img'),ti=el('div','ti');
+  c.type='button';c.title=title;im.onerror=()=>{if(im.dataset.f)return;im.dataset.f='1';im.src=MV_IMG+m.poster_path};im.src=mvImg(m.poster_path);im.alt=title;im.loading='lazy';th.append(im);
+  ti.append(el('div','',title),el('div','mvs',yr+' \u00b7 \u2605 '+rt));c.append(th,ti);c.onclick=()=>mvWatch(type,m.id,title);return c};
+ async function load(more){const my=++seq,G=$('mvg'),M=$('mvm');if(!G)return;
+  if(!more){page=1;G.textContent='';G.append(el('div','empty','Loading\u2026'))}
+  M.textContent='';
+  const q=mvQ.trim();
+  try{const path=q?'/search/multi?include_adult=false&query='+encodeURIComponent(q):MV_LISTS.find(l=>l[0]===mvL)[2];
+   const d=await mvGet(path+(path.includes('?')?'&':'?')+'page='+page);
+   if(my!==seq||!$('mvg'))return;
+   if(!more)G.textContent='';
+   (d.results||[]).map(card).filter(Boolean).forEach(c=>G.append(c));
+   if(!G.children.length){G.append(el('div','empty','Nothing found.'));return}
+   if(page<Math.min(d.total_pages||1,q?5:20)){const b=btn('Load more',()=>{page++;b.disabled=true;load(true)});M.append(b)}
+  }catch(e){if(my!==seq||!$('mvg'))return;if(!more)G.textContent='';(more?M:G).append(el('div','empty','Could not load movies: '+e.message))}}
+ const chips=()=>{const C=$('mvc');C.textContent='';MV_LISTS.forEach(l=>{const b=btn(l[1],()=>{mvL=l[0];mvQ='';$('mvq').value='';chips();load()});if(!mvQ.trim()&&l[0]===mvL)b.classList.add('pri');C.append(b)})};
+ $('mvq').value=mvQ;$('mvq').oninput=()=>{mvQ=$('mvq').value;clearTimeout(t);t=setTimeout(()=>{chips();load()},450)};
+ subs.push(()=>clearTimeout(t));chips();load()}
+async function mvWatch(type,id,title){
+ let s=1,e=1,sbx=true,fr=null,cur='';
+ $('pane').innerHTML=ph('x','')+'<div class="panel"><div class="bd"><div class="row" id="gbar"></div></div><div id="gfw"></div></div><div id="mvt"></div>';
+ const h=$('pane').querySelector('h1');h.textContent=title;
+ const p=h.parentNode.appendChild(document.createElement('p'));p.textContent=type==='tv'?'Pick a season and episode below. If the video does not play, try turning the popup block off.':'Click inside the player to start. If the video does not play, try turning the popup block off.';
+ const src=()=>type==='movie'?'https://flixer.su/watch/movie/'+id:'https://flixer.su/watch/tv/'+id+'/'+s+'/'+e;
+ const mk=()=>{const f=document.createElement('iframe');f.className='gframe';f.title=title;f.setAttribute('allow',frameAttrs+'; encrypted-media; picture-in-picture');f.allowFullscreen=true;
+  /* popup block: the player frame cannot open new windows or tabs (most of the ads); some players refuse to run like this, hence the switch */
+  if(sbx)f.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation');
+  f.src=cur=src();return f};
+ fr=mk();$('gfw').append(fr);
+ const a=el('a','btn sm','Open in new tab');a.href=cur;a.target='_blank';a.rel='noopener';a.style.textDecoration='none';
+ const swap=()=>{const n=mk();fr.replaceWith(n);fr=n;a.href=cur};
+ const sb=btn('Popup block: on',()=>{sbx=!sbx;sb.textContent='Popup block: '+(sbx?'on':'off');swap()});
+ $('gbar').append(btn('\u2190 Back',()=>vMovies()),btn('Fullscreen',()=>{if(fr.requestFullscreen)fr.requestFullscreen()}),btn('Reload',swap),sb,a);
+ if(type!=='tv')return;
+ $('mvt').innerHTML='<div class="panel" style="margin-top:14px"><div class="bd"><select id="mvs" aria-label="Season" style="max-width:260px"></select></div><div class="mve" id="mve"></div></div>';
+ let tok=0;
+ const eps=async()=>{const my=++tok,E=$('mve');if(!E)return;E.textContent='';E.append(el('div','empty','Loading episodes\u2026'));
+  try{const j=await mvGet('/tv/'+id+'/season/'+s);if(my!==tok||!$('mve'))return;E.textContent='';
+   (j.episodes||[]).forEach(x=>{const b=el('button','mvep','Episode '+x.episode_number+': '+(x.name||''));b.type='button';if(x.episode_number===e)b.classList.add('on');
+    b.onclick=()=>{e=x.episode_number;E.querySelectorAll('.mvep').forEach(y=>y.classList.toggle('on',y===b));swap()};E.append(b)});
+   if(!E.children.length)E.append(el('div','empty','No episodes listed for this season.'))}
+  catch(err){if(my===tok&&$('mve')){$('mve').textContent='';$('mve').append(el('div','empty','Could not load episodes ('+err.message+').'))}}};
+ try{const d=await mvGet('/tv/'+id);const S=$('mvs');if(!S)return;
+  let ss=(d.seasons||[]).filter(x=>x.season_number>0);if(!ss.length)ss=d.seasons||[];
+  ss.forEach(x=>{const o=el('option','',x.name||'Season '+x.season_number);o.value=x.season_number;S.append(o)});
+  if(ss.length&&!ss.some(x=>x.season_number===1)){s=ss[0].season_number;S.value=s;swap()}
+  S.onchange=()=>{s=+S.value;e=1;swap();eps()};eps()}
+ catch(err){if($('mve'))$('mve').append(el('div','empty','Could not load seasons ('+err.message+').'))}}
+/* ---------- Proxy tab ----------
+   Home screen (logo, search, shortcut dock, animated network) and a browser bar. Pages come through /api/proxy and are shown in a
+   frame with no access to this site (no allow-same-origin). Shortcuts are editable and saved in this browser. */
+const pxTile=(bg,inner)=>`<svg viewBox="0 0 26 26" width="26" height="26"><rect width="26" height="26" rx="6" fill="${bg}"/><svg x="5" y="5" width="16" height="16" viewBox="0 0 24 24">${inner}</svg></svg>`;
+const pxLu=d=>`<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const PX_TT='M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z';
+const PX_IC={
+ yt:'<svg viewBox="0 0 28 20" width="28" height="20"><rect width="28" height="20" rx="5.5" fill="#f03"/><path d="M11 5.5l7.5 4.5-7.5 4.5z" fill="#fff"/></svg>',
+ tt:pxTile('#000',`<path transform="translate(-.7 .7)" fill="#25f4ee" d="${PX_TT}"/><path transform="translate(.7 -.7)" fill="#fe2c55" d="${PX_TT}"/><path fill="#fff" d="${PX_TT}"/>`),
+ dc:pxTile('#5865f2','<path fill="#fff" d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.2.5a18 18 0 0 0-6.4 0L8.6 3a19.8 19.8 0 0 0-4.9 1.4C.6 9-.2 13.5.2 18a19.9 19.9 0 0 0 6 3l1.3-2.1c-.7-.2-1.4-.6-2-1l.5-.4a14.2 14.2 0 0 0 12 0l.5.4c-.6.4-1.3.8-2 1l1.3 2.1a19.9 19.9 0 0 0 6-3c.5-5.2-.8-9.7-3.5-13.6zM8.1 15.3c-1.2 0-2.1-1-2.1-2.3s.9-2.3 2.1-2.3 2.1 1 2.1 2.3-.9 2.3-2.1 2.3zm7.8 0c-1.2 0-2.1-1-2.1-2.3s.9-2.3 2.1-2.3 2.1 1 2.1 2.3-.9 2.3-2.1 2.3z"/>'),
+ x:pxTile('#000','<path fill="#fff" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>'),
+ g:'<svg viewBox="0 0 24 24" width="24" height="24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09C3.55 21.3 7.52 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62h-3.98a11.86 11.86 0 0 0 0 10.76l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.52 0 3.55 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/></svg>',
+ gfn:pxTile('#76b900','<path d="M2.5 12c2.2-3.8 5.3-5.6 9.5-5.6s7.3 1.8 9.5 5.6c-2.2 3.8-5.3 5.6-9.5 5.6S4.7 15.8 2.5 12z" fill="none" stroke="#111" stroke-width="2.2"/><circle cx="12" cy="12" r="2.8" fill="#111"/>'),
+ pad:pxLu('<line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>'),
+ bot:pxLu('<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>'),
+ mus:pxLu('<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'),
+ chat:pxLu('<path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>'),
+ pen:pxLu('<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>'),
+ srch:pxLu('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'),
+ go:pxLu('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>')};
+const PX_DEFAULT=[['YouTube','https://www.youtube.com/','yt'],['TikTok','https://www.tiktok.com/','tt'],['Discord','https://discord.com/app','dc'],['X','https://x.com/','x'],['Google','https://www.google.com/','g'],['GeForce NOW','https://play.geforcenow.com/','gfn'],['Games','tab:games','pad'],['AI','https://chatgpt.com/','bot'],['Music','https://open.spotify.com/','mus'],['Chat','tab:chat','chat']];
+function pxLoad(){try{const a=JSON.parse(localStorage.getItem('gfg_px_links'));
+ if(Array.isArray(a)&&a.length&&a.every(l=>Array.isArray(l)&&typeof l[0]==='string'&&typeof l[1]==='string'&&/^(tab:[a-z]+|https?:\/\/)/i.test(l[1])))return a.slice(0,24).map(l=>[l[0].slice(0,24),l[1].slice(0,500),PX_IC[l[2]]?l[2]:''])}catch(e){}
+ return PX_DEFAULT.map(l=>l.slice())}
+const pxSave=a=>{try{localStorage.setItem('gfg_px_links',JSON.stringify(a))}catch(e){}};
+function pxToUrl(q){q=q.trim();if(!q)return '';
+ if(/^https?:\/\//i.test(q))return q;
+ if(!/\s/.test(q)&&/^([a-z0-9-]+\.)+[a-z]{2,}(:\d+)?([\/?#]\S*)?$/i.test(q))return 'https://'+q;
+ return 'https://html.duckduckgo.com/html/?q='+encodeURIComponent(q)}
+function pxRgb(c){const v=getComputedStyle(document.documentElement).getPropertyValue('--pri2').trim()||'#4ade80';c.fillStyle='#4ade80';c.fillStyle=v;const s=c.fillStyle;
+ let m=/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(s);if(m)return[parseInt(m[1],16),parseInt(m[2],16),parseInt(m[3],16)];
+ m=/(\d+)[, ]+(\d+)[, ]+(\d+)/.exec(s);return m?[+m[1],+m[2],+m[3]]:[74,222,128]}
+/* slow drifting dots joined by faint lines, like the network in the reference; returns a stop function */
+function pxBg(cv){const c=cv.getContext('2d'),dpr=Math.min(2,window.devicePixelRatio||1),still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ let W=0,H=0,pts=[],raf=0,on=true,rgb=pxRgb(c);const L=135;
+ const size=()=>{const b=cv.getBoundingClientRect();W=b.width;H=b.height;if(!W||!H)return;cv.width=W*dpr;cv.height=H*dpr;c.setTransform(dpr,0,0,dpr,0,0);
+  const n=Math.max(36,Math.min(130,Math.round(W*H/7500)));pts=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:Math.random()<.22?1.9:1.1}))};
+ const draw=()=>{c.clearRect(0,0,W,H);const[R,G,B]=rgb;
+  for(const p of pts){p.x+=p.vx;p.y+=p.vy;if(p.x<-20)p.x=W+20;else if(p.x>W+20)p.x=-20;if(p.y<-20)p.y=H+20;else if(p.y>H+20)p.y=-20}
+  c.lineWidth=1;
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const a=pts[i],b=pts[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
+   if(d<L){c.strokeStyle='rgba('+R+','+G+','+B+','+((1-d/L)*.3).toFixed(3)+')';c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke()}}
+  c.fillStyle='rgba('+R+','+G+','+B+',.55)';
+  for(const p of pts){c.beginPath();c.arc(p.x,p.y,p.r,0,6.283);c.fill()}};
+ const loop=()=>{if(!on)return;if(!cv.isConnected){on=false;return}if(!document.hidden)draw();raf=requestAnimationFrame(loop)};
+ size();const ro=window.ResizeObserver?new ResizeObserver(()=>{size();if(still)draw()}):null;if(ro)ro.observe(cv);
+ if(still)draw();else loop();
+ return()=>{on=false;cancelAnimationFrame(raf);if(ro)ro.disconnect()}}
+function vProxy(){
+ let links=pxLoad(),edit=false,tk=null,cur='',fr=null,stopBg=()=>{};
+ $('pane').innerHTML=ph('proxy','Browse the web from here.')+'<div class="panel px" id="px"></div><p class="note" style="padding:10px 0 0">Pages open in a protected frame that cannot reach your account. Simple sites work best: big web apps (YouTube, Discord, TikTok, X) often will not load through a basic proxy.</p>';
+ const onMsg=e=>{if(!fr||e.source!==fr.contentWindow)return;const d=e.data;if(!d||d.gfgpx!==1)return;cur=String(d.url||cur);const u=$('pxu');if(u&&document.activeElement!==u)u.value=cur};
+ addEventListener('message',onMsg);subs.push(()=>{removeEventListener('message',onMsg);stopBg()});
+ const key=async()=>{if(!tk||tk.exp-Date.now()<15*6e4)tk=await api({op:'pxtoken'});return tk.k};
+ const say=t=>{const m=$('pxm');if(m)m.textContent=t||''};
+ const post=m=>{if(fr&&fr.contentWindow)fr.contentWindow.postMessage({gfgpx:m},'*')};
+ const go=u=>{if(u.startsWith('tab:'))show(u.slice(4));else open(pxToUrl(u))};
+ async function open(url){if(!url)return;say('');
+  try{await key()}catch(e){say('Could not start the proxy: '+e.message);return}
+  cur=url;browse();load()}
+ function load(){const w=$('pxw');if(!w||!tk)return;const f=document.createElement('iframe');f.className='px-frame';f.title='Proxied page';
+  f.setAttribute('sandbox','allow-scripts allow-forms allow-modals allow-pointer-lock allow-presentation allow-downloads');
+  f.setAttribute('allow',frameAttrs);f.setAttribute('referrerpolicy','no-referrer');
+  f.src='/api/proxy?k='+encodeURIComponent(tk.k)+'&u='+encodeURIComponent(cur);w.replaceChildren(f);fr=f}
+ function browse(){stopBg();const r=$('px');r.classList.add('br');r.innerHTML='<div class="px-bar"></div><div class="px-fw" id="pxw"></div>';
+  const ui=el('input');ui.id='pxu';ui.value=cur;ui.spellcheck=false;ui.autocapitalize='off';ui.setAttribute('aria-label','Address');
+  const fm=el('form','px-addr');fm.append(ui);fm.onsubmit=e=>{e.preventDefault();const v=ui.value.trim();if(v)open(pxToUrl(v))};
+  r.firstChild.append(btn('Home',home),btn('Back',()=>post('back')),btn('Forward',()=>post('fwd')),btn('Reload',()=>open(cur)),fm,btn('Fullscreen',()=>{if(r.requestFullscreen)r.requestFullscreen()}))}
+ function fav(l){let h='';try{h=new URL(l[1]).hostname}catch(e){}const s=el('b','',(l[0]||'?').charAt(0).toUpperCase());
+  if(!h)return s;const i=new Image();i.alt='';i.src='https://www.google.com/s2/favicons?sz=64&domain='+encodeURIComponent(h);i.onerror=()=>i.replaceWith(s);return i}
+ function dock(){const d=$('pxd');if(!d)return;d.innerHTML='';
+  links.forEach((l,ix)=>{const b=el('button','px-ic'+(edit?' rm':''));b.type='button';b.title=edit?'Remove '+l[0]:l[0];b.setAttribute('aria-label',b.title);
+   if(l[2]&&PX_IC[l[2]])b.innerHTML=PX_IC[l[2]];else b.append(fav(l));
+   b.onclick=()=>{if(edit){links.splice(ix,1);pxSave(links);dock();return}go(l[1])};d.append(b)});
+  d.append(el('span','px-sep'));
+  const pe=el('button','px-ic'+(edit?' on':''));pe.type='button';pe.innerHTML=PX_IC.pen;pe.title=edit?'Done editing':'Edit shortcuts';pe.setAttribute('aria-label',pe.title);
+  pe.onclick=()=>{edit=!edit;dock();editor()};d.append(pe)}
+ function editor(){const e=$('pxe');if(!e)return;e.innerHTML='';e.classList.toggle('hide',!edit);if(!edit)return;
+  const n=el('input');n.placeholder='Name';n.maxLength=24;n.setAttribute('aria-label','Shortcut name');
+  const u=el('input');u.placeholder='https://example.com';u.setAttribute('aria-label','Shortcut address');u.autocapitalize='off';u.spellcheck=false;
+  const add=el('button','btn sm pri','Add');add.type='submit';
+  const rs=btn('Reset',()=>{links=PX_DEFAULT.map(l=>l.slice());pxSave(links);dock()});
+  e.onsubmit=ev=>{ev.preventDefault();const nm=n.value.trim(),raw=u.value.trim();if(!nm||!raw){say('Give the shortcut a name and an address.');return}
+   let url=/^https?:\/\//i.test(raw)?raw:'https://'+raw;try{new URL(url)}catch(x){say('That address does not look right.');return}
+   if(links.length>=24){say('That is the maximum number of shortcuts.');return}
+   say('');links.push([nm,url,'']);pxSave(links);n.value=u.value='';dock()};
+  e.append(n,u,add,rs)}
+ function home(){stopBg();fr=null;cur='';const r=$('px');r.classList.remove('br');
+  r.innerHTML='<canvas aria-hidden="true"></canvas><div class="px-home"><div class="px-logo">GFG</div>'+
+   '<form class="px-search" id="pxf"><span aria-hidden="true">'+PX_IC.srch+'</span><input id="pxq" placeholder="Search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search or enter a web address"><button class="px-go" aria-label="Go">'+PX_IC.go+'</button></form>'+
+   '<div class="px-msg" id="pxm" role="status"></div></div>';
+  $('pxf').onsubmit=e=>{e.preventDefault();const v=$('pxq').value.trim();if(v)open(pxToUrl(v))};
+  stopBg=pxBg(r.querySelector('canvas'))}
+ home()}
 init();
 </script>
 

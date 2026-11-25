@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Plants vs Zombies</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #000;
+      }
+      #stage { width: 1024px; height: 626px; position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+      .container {
+        text-align: center;
+      }
+
+      #background {
+        background: url("images/frontyard.png");
+        width: 1024px;
+        height: 626px;
+      }
+      div.plant1 {
+        position: absolute;
+        background: url("images/plants2.png");
+        background-position: -115px -68px;
+        width: 60px;
+        height: 68px;
+        background-size: 700px;
+      }
+      div.zombie1 {
+        position: absolute;
+        background: url("images/monsters.png");
+        background-position: 0px -384px;
+        width: 128px;
+        height: 128px;
+      }
+      div.zombie2 {
+        position: absolute;
+        background: url("images/monsters.png");
+        background-position: 0px -256px;
+        width: 128px;
+        height: 128px;
+      }
+
+      div.zombie3 {
+        position: absolute;
+        background: url("images/monsters.png");
+        background-position: 0px -136px;
+        width: 128px;
+        height: 128px;
+      }
+
+      div.zombie4 {
+        position: absolute;
+        background: url("images/monsters.png");
+        background-position: 0px -15px;
+        width: 128px;
+        height: 128px;
+      }
+      div.bullet {
+        position: absolute;
+        background: url("images/plants2.png");
+        background-position: -490px 0px;
+        width: 30px;
+        height: 30px;
+        background-size: 700px;
+      }
+
+      #explosion {
+        display: none;
+      }
+    </style>
+    <script src="index.js"></script>
+  </head>
+
+  <body>
+    <div class="container"><div id="stage">
+      <div id="background">
+        <div id="zombies"></div>
+        <div id="plants"></div>
+        <div id="bullets"></div>
+      </div>
+      <div id="explosion"></div></div>
+      <audio id="bgm" hidden loop>
+        <source src="bg-music.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+  <script>
+  function fit(){var s=Math.min(innerWidth/1024,innerHeight/626),st=document.getElementById("stage");
+    st.style.transform="scale("+s+")";st.style.left=Math.max(0,(innerWidth-1024*s)/2)+"px";st.style.top=Math.max(0,(innerHeight-626*s)/2)+"px"}
+  addEventListener("resize",fit);fit();
+  function startMusic(){var a=document.getElementById("bgm");a.volume=0.5;a.play().catch(function(){})}
+  addEventListener("pointerdown",startMusic,{once:true});addEventListener("keydown",startMusic,{once:true});
+</script>
+</body>
+</html>

@@ -1,1 +1,1 @@
-{"functions":{"api/index.js":{"maxDuration":30}}}
+{"outputDirectory":".","functions":{"api/index.js":{"maxDuration":30},"api/proxy.js":{"maxDuration":30},"api/movies.js":{"maxDuration":30}}}

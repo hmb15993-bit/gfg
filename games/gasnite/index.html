@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GASNITE</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <!-- Three.js with multi-CDN fallback -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://unpkg.com/three@0.128.0/build/three.min.js"><\/script>');
+    }
+  </script>
+</head>
+<body>
+  <!-- Fullscreen 3D Viewport (Lobby / Locker Preview / Battle Royale World) -->
+  <div id="viewport-container">
+    <canvas id="three-canvas"></canvas>
+    <canvas id="fallback-canvas"></canvas>
+  </div>
+
+  <!-- Top Navigation Bar (Classic Season Style) -->
+  <header id="top-bar">
+    <div class="brand-logo">GASNITE</div>
+    <nav id="main-nav">
+      <button class="nav-tab active" data-tab="lobby">LOBBY</button>
+      <button class="nav-tab" data-tab="locker">LOCKER <span id="locker-badge" class="badge">100</span></button>
+      <button class="nav-tab" data-tab="shop">ITEM SHOP</button>
+      <button class="nav-tab" data-tab="verify">VERIFY 100</button>
+      <button class="nav-tab" data-tab="settings">SETTINGS</button>
+    </nav>
+    <div class="top-right-stats">
+      <div class="currency-pill" title="G-Bucks (Earned from Kills, Wins & Play Town)">
+        <span class="coin-icon">G</span>
+        <span id="coin-balance">0</span>
+      </div>
+      <div class="party-pill">
+        <span class="party-icon">👤</span>
+        <span>1 / 4</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== TAB 1: CLASSIC LOBBY ==================== -->
+  <main id="tab-lobby" class="screen-layer active">
+    <!-- Left Season & Daily Challenges Card -->
+    <aside class="lobby-left-panel">
+      <div class="season-card">
+        <div class="season-header">SEASON 3</div>
+        <div class="level-row">
+          <div class="banner-shield">
+            <div class="wave"></div>
+          </div>
+          <div class="level-info">
+            <div class="level-title">LEVEL <span id="player-level">1</span></div>
+            <div class="xp-bar"><div class="xp-fill" id="xp-fill-bar" style="width: 0%"></div></div>
+            <div class="xp-sub" id="xp-sub-text">0 / 100 XP • KILLS & WINS LEVEL UP</div>
+          </div>
+        </div>
+        <div class="pass-strip">
+          <span class="star-badge">★ BATTLE PASS</span>
+          <span class="tier-progress">14 / 100</span>
+        </div>
+        <div class="challenges-box">
+          <div class="challenges-title">CAREER STATS & G-BUCKS REWARDS</div>
+          <div class="challenge-item">
+            <span>Total Kills (+25 XP / +50 G)</span>
+            <span class="chal-prog" id="stat-kills">0</span>
+          </div>
+          <div class="challenge-item">
+            <span>Total Wins (+100 XP / +250 G)</span>
+            <span class="chal-prog" id="stat-wins">0</span>
+          </div>
+          <div class="challenge-item">
+            <span>Play Town Time (+100 G / min)</span>
+            <span class="chal-prog" id="stat-town">0m</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="equipped-summary-card">
+        <div class="eq-label">EQUIPPED LOADOUT</div>
+        <div class="eq-name" id="lobby-skin-name">Aura</div>
+        <div class="eq-sub" id="lobby-set-name">Guild Set • Uncommon</div>
+        <div class="eq-gear-row">
+          <span>⛏️ <b id="lobby-pickaxe-name">Gold Crow</b></span>
+          <span>🎒 <b id="lobby-bling-name">Gold Dagger Pack</b></span>
+        </div>
+        <div class="lobby-quick-actions">
+          <button class="btn-mini" id="btn-lobby-emote">💃 Dance Emote</button>
+          <button class="btn-mini" id="btn-lobby-rotate">🔄 Spin Hero</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center Stage Interaction Hint (Transparent, non-blocking) -->
+    <div class="lobby-center-hint">
+      <div class="player-nameplate">
+        <span class="crown">👑</span>
+        <span id="lobby-player-tag">PlayerOne</span>
+        <span class="ready-status" id="lobby-ready-tag">Ready</span>
+      </div>
+      <div class="drag-tip">Drag to Rotate Hero • Scroll to Zoom</div>
+    </div>
+
+    <!-- Bottom-Right Matchmaking & READY Box (Fixed cleanly in bottom-right corner!) -->
+    <aside class="lobby-bottom-right">
+      <div class="mode-banner">NEW MODE AVAILABLE!</div>
+      <div class="mode-box">
+        <div class="mode-label">GAME MODE</div>
+        <div class="mode-value" id="selected-mode">SOLO</div>
+        <button class="btn-change-mode" id="btn-cycle-mode">CHANGE MODE</button>
+        <button class="btn-change-mode" id="btn-toggle-build">BUILD MODE: ON</button>
+        <div class="fill-row">
+          <span>Squad Fill</span>
+          <span id="fill-status">No Fill</span>
+        </div>
+        <button class="btn-ready" id="btn-play-match">PLAY / READY</button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ==================== TAB 2: 3-COLUMN LOCKER ==================== -->
+  <section id="tab-locker" class="screen-layer">
+    <!-- Left Inventory Grid -->
+    <div class="locker-left">
+      <div class="locker-cats">
+        <button class="cat-btn active" data-cat="outfit">Outfits</button>
+        <button class="cat-btn" data-cat="bling">Back Blings</button>
+        <button class="cat-btn" data-cat="pickaxe">Pickaxes</button>
+        <button class="cat-btn" data-cat="glider">Gliders</button>
+        <button class="cat-btn" data-cat="emote">Emotes</button>
+        <button class="cat-btn" data-cat="wrap">Wraps</button>
+      </div>
+
+      <div class="locker-controls">
+        <input type="text" id="locker-search" placeholder="Search skins, sets, items..." />
+        <div class="filter-row">
+          <select id="rarity-filter">
+            <option value="all">All Rarities</option>
+            <option value="common">Common (Grey)</option>
+            <option value="uncommon">Uncommon (Green)</option>
+            <option value="rare">Rare (Blue)</option>
+            <option value="epic">Epic (Purple)</option>
+            <option value="legendary">Legendary (Gold)</option>
+            <option value="special">Special (Prismatic)</option>
+          </select>
+          <select id="sort-filter">
+            <option value="id">Sort: Number</option>
+            <option value="az">Sort: A–Z</option>
+            <option value="recent">Sort: Recently Added</option>
+            <option value="rarity">Sort: Rarity</option>
+          </select>
+        </div>
+        <div class="quick-filter-btns">
+          <button id="btn-fav-only" class="pill-btn">★ Favorites</button>
+          <button id="btn-random-fav" class="pill-btn">🎲 Random Fav</button>
+          <button id="btn-unequip" class="pill-btn">🚫 Unequip Gear</button>
+        </div>
+      </div>
+
+      <div id="locker-grid" class="cosmetic-grid"></div>
+    </div>
+
+    <!-- Center 3D Stage Controls -->
+    <div class="locker-center">
+      <div class="preview-mode-tabs">
+        <button class="prev-tab active" data-preview="character">3D Character</button>
+        <button class="prev-tab" data-preview="pickaxe">3D Pickaxe</button>
+        <button class="prev-tab" data-preview="bling">3D Back Bling</button>
+      </div>
+      <div class="loadout-bar">
+        <span>Loadouts:</span>
+        <button class="loadout-slot active" data-slot="0">1</button>
+        <button class="loadout-slot" data-slot="1">2</button>
+        <button class="loadout-slot" data-slot="2">3</button>
+        <button class="loadout-slot" data-slot="3">4</button>
+        <button class="loadout-slot" data-slot="4">5</button>
+        <button id="btn-save-loadout" class="btn-save-slot">Save Slot</button>
+      </div>
+    </div>
+
+    <!-- Right Detailed Skin Information Panel -->
+    <aside class="locker-right">
+      <div id="detail-rarity-banner" class="detail-rarity rarity-uncommon">UNCOMMON OUTFIT</div>
+      <h2 id="detail-name">Aura</h2>
+      <div id="detail-set" class="detail-set">Part of the Guild Set</div>
+      <div id="detail-release" class="detail-release">Introduced: Chapter 1, Season 8</div>
+
+      <div class="detail-section">
+        <div class="sec-title">AVAILABLE STYLES</div>
+        <div id="detail-styles" class="style-pills"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="sec-title">MATCHING COSMETIC SET</div>
+        <div class="matching-card" id="match-pickaxe-card">
+          <div class="m-icon">⛏️</div>
+          <div class="m-info">
+            <div class="m-label">Matching Pickaxe</div>
+            <div class="m-val" id="detail-match-pickaxe">Gold Crow</div>
+          </div>
+        </div>
+        <div class="matching-card" id="match-bling-card">
+          <div class="m-icon">🎒</div>
+          <div class="m-info">
+            <div class="m-label">Matching Back Bling</div>
+            <div class="m-val" id="detail-match-bling">Gold Dagger Pack</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-actions">
+        <button id="btn-equip-item" class="btn-primary-action">EQUIP ITEM</button>
+        <button id="btn-equip-full-set" class="btn-secondary-action">EQUIP FULL MATCHING SET</button>
+        <button id="btn-toggle-fav" class="btn-fav-action">☆ ADD TO FAVORITES</button>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ==================== TAB 3: HOURLY ROTATING ITEM SHOP (3 SKINS + 2 PICKS) ==================== -->
+  <section id="tab-shop" class="screen-layer">
+    <div class="shop-wrapper">
+      <div class="shop-hourly-banner">
+        <div>
+          <span class="shop-live-dot">●</span>
+          <strong>HOURLY ITEM SHOP ROTATION</strong> — 3 Skins &amp; 2 Pickaxes Available Now
+        </div>
+        <div class="shop-timer-box">
+          Next Rotation in: <span class="shop-timer" id="hourly-countdown">59:59</span>
+        </div>
+      </div>
+
+      <div class="shop-split-grid">
+        <!-- Left: 3 Featured Skins (Including Icon Series) -->
+        <div class="shop-column weekly-col">
+          <div class="shop-col-header">
+            <span>FEATURED OUTFITS (3 AT ONCE)</span>
+            <span class="shop-timer">ROTATES HOURLY</span>
+          </div>
+          <div id="shop-weekly-grid" class="weekly-cards three-col-shop"></div>
+        </div>
+
+        <!-- Right: 2 Daily Pickaxes -->
+        <div class="shop-column daily-col">
+          <div class="shop-col-header">
+            <span>FEATURED PICKAXES (2 AT ONCE)</span>
+            <span class="shop-timer">ROTATES HOURLY</span>
+          </div>
+          <div id="shop-daily-grid" class="daily-cards two-pick-shop"></div>
+        </div>
+      </div>
+
+      <div class="shop-earn-footer">
+        <span>💡 How to earn <strong>G-Bucks</strong> &amp; <strong>Level Up</strong>:</span>
+        <span>⚔️ Eliminate Bots (<strong>+50 G-Bucks</strong> &amp; <strong>+25 XP</strong>)</span>
+        <span>🏆 Win Battle Royale (<strong>+250 G-Bucks</strong> &amp; <strong>+100 XP</strong>)</span>
+        <span>🏙️ Play Town Mode (<strong>+100 G-Bucks</strong> every minute)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TAB 5: DIAGNOSTIC VERIFICATION ==================== -->
+  <section id="tab-settings" class="screen-layer">
+    <div class="gp-panel"><h2>SETTINGS</h2><p><b>Username</b> &nbsp;<input id="gp-name" maxlength="16" style="padding:6px 10px;border-radius:4px;border:1px solid #60a5fa;background:#0b1530;color:#fff"> <button id="gp-name-save" class="btn-primary" style="padding:7px 14px;font-weight:800">Save</button></p><p><b>Mouse sensitivity</b> &nbsp;<input id="gp-sens" type="range" min=".3" max="3" step=".1" style="vertical-align:middle"></p><h3>Keybinds</h3><p>Click a key, then press the new key. Binding a key that is already used swaps the two.</p><div id="gp-kb"></div></div>
+  </section>
+
+  <section id="tab-verify" class="screen-layer">
+    <div class="verify-panel">
+      <h2>100-SKIN SYSTEM VERIFICATION & TEST SUITE</h2>
+      <p>Validates all 100 skins, matching pickaxes, matching back blings, 3D articulated rigs, equip/unequip states, save persistence, and shop bundles.</p>
+      <button id="btn-run-tests" class="btn-ready" style="max-width:280px;margin:12px 0;">RUN FULL 100-SKIN TEST</button>
+      <pre id="verify-output" class="verify-log">Click "RUN FULL 100-SKIN TEST" to verify every cosmetic entry...</pre>
+    </div>
+  </section>
+
+  <!-- ==================== IN-GAME BATTLE ROYALE HUD ==================== -->
+  <div id="br-hud" class="hidden">
+    <div id="hud-team"></div>
+    <canvas id="hud-compass" width="460" height="46"></canvas>
+    <div id="hud-tr">
+      <div class="hud-pills">
+        <span class="pill" id="br-mode-stat">STORM: <b id="br-storm">100%</b></span>
+        <span class="pill">👥 <b id="br-alive">25</b></span>
+        <span class="pill">☠ <b id="br-elims">0</b></span>
+      </div>
+      <button id="btn-exit-match" class="btn-exit-br">RETURN TO LOBBY</button>
+    </div>
+    <div class="br-crosshair"></div>
+    <div id="hud-feed"></div>
+    <div id="hud-bars">
+      <div class="hb"><i>🛡</i><div class="track"><div id="br-shield-fill" class="fs"></div></div><b id="br-shield-num">100</b></div>
+      <div class="hb"><i>✚</i><div class="track"><div id="br-hp-fill" class="fh"></div></div><b id="br-hp-num">100</b></div>
+    </div>
+    <div id="hud-hot"></div>
+    <div class="br-controls-hint"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-msg" class="toast hidden"></div>
+
+  <!-- Modular JavaScript Files -->
+  <script src="js/cosmetics_db.js"></script>
+  <script src="js/accounts.js"></script>
+  <script src="js/skin_looks.js"></script>
+  <script src="js/character_rig.js"></script>
+  <script src="js/plus_rig.js"></script>
+  <script src="js/skin_portraits.js"></script>
+  <script src="js/textures.js"></script>
+  <script src="js/game_engine.js"></script>
+  <script src="js/weapons.js"></script>
+  <script src="js/plus_br.js"></script>
+  <script src="js/build_mode.js"></script>
+  <script src="js/world_houses.js"></script>
+  <script src="js/world.js"></script>
+</body>
+</html>
